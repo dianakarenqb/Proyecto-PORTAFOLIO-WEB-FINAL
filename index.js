@@ -1,68 +1,76 @@
-class Node {
-	/// value;
-	/// next;
+'use strict';
 
-	constructor(value) {
-		this.value = value;
+const preserveCamelCase = string => {
+	let isLastCharLower = false;
+	let isLastCharUpper = false;
+	let isLastLastCharUpper = false;
 
-		// TODO: Remove this when targeting Node.js 12.
-		this.next = undefined;
-	}
-}
+	for (let i = 0; i < string.length; i++) {
+		const character = string[i];
 
-class Queue {
-	// TODO: Use private class fields when targeting Node.js 12.
-	// #_head;
-	// #_tail;
-	// #_size;
-
-	constructor() {
-		this.clear();
-	}
-
-	enqueue(value) {
-		const node = new Node(value);
-
-		if (this._head) {
-			this._tail.next = node;
-			this._tail = node;
+		if (isLastCharLower && /[a-zA-Z]/.test(character) && character.toUpperCase() === character) {
+			string = string.slice(0, i) + '-' + string.slice(i);
+			isLastCharLower = false;
+			isLastLastCharUpper = isLastCharUpper;
+			isLastCharUpper = true;
+			i++;
+		} else if (isLastCharUpper && isLastLastCharUpper && /[a-zA-Z]/.test(character) && character.toLowerCase() === character) {
+			string = string.slice(0, i - 1) + '-' + string.slice(i - 1);
+			isLastLastCharUpper = isLastCharUpper;
+			isLastCharUpper = false;
+			isLastCharLower = true;
 		} else {
-			this._head = node;
-			this._tail = node;
-		}
-
-		this._size++;
-	}
-
-	dequeue() {
-		const current = this._head;
-		if (!current) {
-			return;
-		}
-
-		this._head = this._head.next;
-		this._size--;
-		return current.value;
-	}
-
-	clear() {
-		this._head = undefined;
-		this._tail = undefined;
-		this._size = 0;
-	}
-
-	get size() {
-		return this._size;
-	}
-
-	* [Symbol.iterator]() {
-		let current = this._head;
-
-		while (current) {
-			yield current.value;
-			current = current.next;
+			isLastCharLower = character.toLowerCase() === character && character.toUpperCase() !== character;
+			isLastLastCharUpper = isLastCharUpper;
+			isLastCharUpper = character.toUpperCase() === character && character.toLowerCase() !== character;
 		}
 	}
-}
 
-module.exports = Queue;
+	return string;
+};
+
+const camelCase = (input, options) => {
+	if (!(typeof input === 'string' || Array.isArray(input))) {
+		throw new TypeError('Expected the input to be `string | string[]`');
+	}
+
+	options = Object.assign({
+		pascalCase: false
+	}, options);
+
+	const postProcess = x => options.pascalCase ? x.charAt(0).toUpperCase() + x.slice(1) : x;
+
+	if (Array.isArray(input)) {
+		input = input.map(x => x.trim())
+			.filter(x => x.length)
+			.join('-');
+	} else {
+		input = input.trim();
+	}
+
+	if (input.length === 0) {
+		return '';
+	}
+
+	if (input.length === 1) {
+		return options.pascalCase ? input.toUpperCase() : input.toLowerCase();
+	}
+
+	const hasUpperCase = input !== input.toLowerCase();
+
+	if (hasUpperCase) {
+		input = preserveCamelCase(input);
+	}
+
+	input = input
+		.replace(/^[_.\- ]+/, '')
+		.toLowerCase()
+		.replace(/[_.\- ]+(\w|$)/g, (_, p1) => p1.toUpperCase())
+		.replace(/\d+(\w|$)/g, m => m.toUpperCase());
+
+	return postProcess(input);
+};
+
+module.exports = camelCase;
+// TODO: Remove this for the next major release
+module.exports.default = camelCase;

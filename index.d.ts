@@ -1,56 +1,63 @@
-declare class Queue<ValueType> implements Iterable<ValueType> {
-	/**
-	The size of the queue.
-	*/
-	readonly size: number;
+declare namespace camelcase {
+	interface Options {
+		/**
+		Uppercase the first character: `foo-bar` → `FooBar`.
 
-	/**
-	Tiny queue data structure.
+		@default false
+		*/
+		readonly pascalCase?: boolean;
+	}
+}
 
-	The instance is an [`Iterable`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols), which means you can iterate over the queue front to back with a “for…of” loop, or use spreading to convert the queue to an array. Don't do this unless you really need to though, since it's slow.
+declare const camelcase: {
+	/**
+	Convert a dash/dot/underscore/space separated string to camelCase or PascalCase: `foo-bar` → `fooBar`.
+
+	@param input - String to convert to camel case.
 
 	@example
 	```
-	import Queue = require('yocto-queue');
+	import camelCase = require('camelcase');
 
-	const queue = new Queue();
+	camelCase('foo-bar');
+	//=> 'fooBar'
 
-	queue.enqueue('🦄');
-	queue.enqueue('🌈');
+	camelCase('foo_bar');
+	//=> 'fooBar'
 
-	console.log(queue.size);
-	//=> 2
+	camelCase('Foo-Bar');
+	//=> 'fooBar'
 
-	console.log(...queue);
-	//=> '🦄 🌈'
+	camelCase('Foo-Bar', {pascalCase: true});
+	//=> 'FooBar'
 
-	console.log(queue.dequeue());
-	//=> '🦄'
+	camelCase('--foo.bar', {pascalCase: false});
+	//=> 'fooBar'
 
-	console.log(queue.dequeue());
-	//=> '🌈'
+	camelCase('foo bar');
+	//=> 'fooBar'
+
+	console.log(process.argv[3]);
+	//=> '--foo-bar'
+	camelCase(process.argv[3]);
+	//=> 'fooBar'
+
+	camelCase(['foo', 'bar']);
+	//=> 'fooBar'
+
+	camelCase(['__foo__', '--bar'], {pascalCase: true});
+	//=> 'FooBar'
 	```
 	*/
-	constructor();
+	(input: string | ReadonlyArray<string>, options?: camelcase.Options): string;
 
-	[Symbol.iterator](): IterableIterator<ValueType>;
+	// TODO: Remove this for the next major release, refactor the whole definition to:
+	// declare function camelcase(
+	// 	input: string | ReadonlyArray<string>,
+	// 	options?: camelcase.Options
+	// ): string;
+	// export = camelcase;
+	default: typeof camelcase;
+};
 
-	/**
-	Add a value to the queue.
-	*/
-	enqueue(value: ValueType): void;
-
-	/**
-	Remove the next value in the queue.
-
-	@returns The removed value or `undefined` if the queue is empty.
-	*/
-	dequeue(): ValueType | undefined;
-
-	/**
-	Clear the queue.
-	*/
-	clear(): void;
-}
-
-export = Queue;
+export = camelcase;

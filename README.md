@@ -1,140 +1,127 @@
-<p align="center">
-  <img width="250" src="/yargs-logo.png">
-</p>
-<h1 align="center"> Yargs </h1>
-<p align="center">
-  <b >Yargs be a node.js library fer hearties tryin' ter parse optstrings</b>
-</p>
+# YAML <a href="https://www.npmjs.com/package/yaml"><img align="right" src="https://badge.fury.io/js/yaml.svg" title="npm package" /></a>
 
-<br>
+`yaml` is a JavaScript parser and stringifier for [YAML](http://yaml.org/), a human friendly data serialization standard. It supports both parsing and stringifying data using all versions of YAML, along with all common data schemas. As a particularly distinguishing feature, `yaml` fully supports reading and writing comments and blank lines in YAML documents.
 
-[![Build Status][travis-image]][travis-url]
-[![NPM version][npm-image]][npm-url]
-[![js-standard-style][standard-image]][standard-url]
-[![Coverage][coverage-image]][coverage-url]
-[![Conventional Commits][conventional-commits-image]][conventional-commits-url]
-[![Slack][slack-image]][slack-url]
+The library is released under the ISC open source license, and the code is [available on GitHub](https://github.com/eemeli/yaml/). It has no external dependencies and runs on Node.js 6 and later, and in browsers from IE 11 upwards.
 
-## Description :
-Yargs helps you build interactive command line tools, by parsing arguments and generating an elegant user interface.
+For the purposes of versioning, any changes that break any of the endpoints or APIs documented here will be considered semver-major breaking changes. Undocumented library internals may change between minor versions, and previous APIs may be deprecated (but not removed).
 
-It gives you:
+For more information, see the project's documentation site: [**eemeli.org/yaml/v1**](https://eemeli.org/yaml/v1/)
 
-* commands and (grouped) options (`my-program.js serve --port=5000`).
-* a dynamically generated help menu based on your arguments.
+To install:
 
-> <img width="400" src="/screen.png">
-
-* bash-completion shortcuts for commands and options.
-* and [tons more](/docs/api.md).
-
-## Installation
-
-Stable version:
-```bash
-npm i yargs
+```sh
+npm install yaml
 ```
 
-Bleeding edge version with the most recent features:
-```bash
-npm i yargs@next
+**Note:** This is `yaml@1`. You may also be interested in the next version, currently available as [`yaml@next`](https://www.npmjs.com/package/yaml/v/next).
+
+## API Overview
+
+The API provided by `yaml` has three layers, depending on how deep you need to go: [Parse & Stringify](https://eemeli.org/yaml/v1/#parse-amp-stringify), [Documents](https://eemeli.org/yaml/#documents), and the [CST Parser](https://eemeli.org/yaml/#cst-parser). The first has the simplest API and "just works", the second gets you all the bells and whistles supported by the library along with a decent [AST](https://eemeli.org/yaml/#content-nodes), and the third is the closest to YAML source, making it fast, raw, and crude.
+
+```js
+import YAML from 'yaml'
+// or
+const YAML = require('yaml')
 ```
 
-## Usage :
+### Parse & Stringify
 
-### Simple Example
+- [`YAML.parse(str, options): value`](https://eemeli.org/yaml/v1/#yaml-parse)
+- [`YAML.stringify(value, options): string`](https://eemeli.org/yaml/v1/#yaml-stringify)
 
-```javascript
-#!/usr/bin/env node
-const {argv} = require('yargs')
+### YAML Documents
 
-if (argv.ships > 3 && argv.distance < 53.5) {
-  console.log('Plunder more riffiwobbles!')
-} else {
-  console.log('Retreat from the xupptumblers!')
-}
+- [`YAML.createNode(value, wrapScalars, tag): Node`](https://eemeli.org/yaml/v1/#creating-nodes)
+- [`YAML.defaultOptions`](https://eemeli.org/yaml/v1/#options)
+- [`YAML.Document`](https://eemeli.org/yaml/v1/#yaml-documents)
+  - [`constructor(options)`](https://eemeli.org/yaml/v1/#creating-documents)
+  - [`defaults`](https://eemeli.org/yaml/v1/#options)
+  - [`#anchors`](https://eemeli.org/yaml/v1/#working-with-anchors)
+  - [`#contents`](https://eemeli.org/yaml/v1/#content-nodes)
+  - [`#errors`](https://eemeli.org/yaml/v1/#errors)
+- [`YAML.parseAllDocuments(str, options): YAML.Document[]`](https://eemeli.org/yaml/v1/#parsing-documents)
+- [`YAML.parseDocument(str, options): YAML.Document`](https://eemeli.org/yaml/v1/#parsing-documents)
+
+```js
+import { Pair, YAMLMap, YAMLSeq } from 'yaml/types'
 ```
 
-```bash
-$ ./plunder.js --ships=4 --distance=22
-Plunder more riffiwobbles!
+- [`new Pair(key, value)`](https://eemeli.org/yaml/v1/#creating-nodes)
+- [`new YAMLMap()`](https://eemeli.org/yaml/v1/#creating-nodes)
+- [`new YAMLSeq()`](https://eemeli.org/yaml/v1/#creating-nodes)
 
-$ ./plunder.js --ships 12 --distance 98.7
-Retreat from the xupptumblers!
+### CST Parser
+
+```js
+import parseCST from 'yaml/parse-cst'
 ```
 
-### Complex Example
+- [`parseCST(str): CSTDocument[]`](https://eemeli.org/yaml/v1/#parsecst)
+- [`YAML.parseCST(str): CSTDocument[]`](https://eemeli.org/yaml/v1/#parsecst)
 
-```javascript
-#!/usr/bin/env node
-require('yargs') // eslint-disable-line
-  .command('serve [port]', 'start the server', (yargs) => {
-    yargs
-      .positional('port', {
-        describe: 'port to bind on',
-        default: 5000
-      })
-  }, (argv) => {
-    if (argv.verbose) console.info(`start server on :${argv.port}`)
-    serve(argv.port)
-  })
-  .option('verbose', {
-    alias: 'v',
-    type: 'boolean',
-    description: 'Run with verbose logging'
-  })
-  .argv
+## YAML.parse
+
+```yaml
+# file.yml
+YAML:
+  - A human-readable data serialization language
+  - https://en.wikipedia.org/wiki/YAML
+yaml:
+  - A complete JavaScript implementation
+  - https://www.npmjs.com/package/yaml
 ```
 
-Run the example above with `--help` to see the help for the application.
+```js
+import fs from 'fs'
+import YAML from 'yaml'
 
-## TypeScript
+YAML.parse('3.14159')
+// 3.14159
 
-yargs has type definitions at [@types/yargs][type-definitions].
+YAML.parse('[ true, false, maybe, null ]\n')
+// [ true, false, 'maybe', null ]
 
+const file = fs.readFileSync('./file.yml', 'utf8')
+YAML.parse(file)
+// { YAML:
+//   [ 'A human-readable data serialization language',
+//     'https://en.wikipedia.org/wiki/YAML' ],
+//   yaml:
+//   [ 'A complete JavaScript implementation',
+//     'https://www.npmjs.com/package/yaml' ] }
 ```
-npm i @types/yargs --save-dev
+
+## YAML.stringify
+
+```js
+import YAML from 'yaml'
+
+YAML.stringify(3.14159)
+// '3.14159\n'
+
+YAML.stringify([true, false, 'maybe', null])
+// `- true
+// - false
+// - maybe
+// - null
+// `
+
+YAML.stringify({ number: 3, plain: 'string', block: 'two\nlines\n' })
+// `number: 3
+// plain: string
+// block: >
+//   two
+//
+//   lines
+// `
 ```
 
-See usage examples in [docs](/docs/typescript.md).
+---
 
-## Webpack
+Browser testing provided by:
 
-See usage examples of yargs with webpack in [docs](/docs/webpack.md).
-
-## Community :
-
-Having problems? want to contribute? join our [community slack](http://devtoolscommunity.herokuapp.com).
-
-## Documentation :
-
-### Table of Contents
-
-* [Yargs' API](/docs/api.md)
-* [Examples](/docs/examples.md)
-* [Parsing Tricks](/docs/tricks.md)
-  * [Stop the Parser](/docs/tricks.md#stop)
-  * [Negating Boolean Arguments](/docs/tricks.md#negate)
-  * [Numbers](/docs/tricks.md#numbers)
-  * [Arrays](/docs/tricks.md#arrays)
-  * [Objects](/docs/tricks.md#objects)
-  * [Quotes](/docs/tricks.md#quotes)
-* [Advanced Topics](/docs/advanced.md)
-  * [Composing Your App Using Commands](/docs/advanced.md#commands)
-  * [Building Configurable CLI Apps](/docs/advanced.md#configuration)
-  * [Customizing Yargs' Parser](/docs/advanced.md#customizing)
-* [Contributing](/contributing.md)
-
-[travis-url]: https://travis-ci.org/yargs/yargs
-[travis-image]: https://img.shields.io/travis/yargs/yargs/master.svg
-[npm-url]: https://www.npmjs.com/package/yargs
-[npm-image]: https://img.shields.io/npm/v/yargs.svg
-[standard-image]: https://img.shields.io/badge/code%20style-standard-brightgreen.svg
-[standard-url]: http://standardjs.com/
-[conventional-commits-image]: https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg
-[conventional-commits-url]: https://conventionalcommits.org/
-[slack-image]: http://devtoolscommunity.herokuapp.com/badge.svg
-[slack-url]: http://devtoolscommunity.herokuapp.com
-[type-definitions]: https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/yargs
-[coverage-image]: https://img.shields.io/nycrc/yargs/yargs
-[coverage-url]: https://github.com/yargs/yargs/blob/master/.nycrc
+<a href="https://www.browserstack.com/open-source">
+<img width=200 src="https://eemeli.org/yaml/images/browserstack.svg" />
+</a>

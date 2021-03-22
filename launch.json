@@ -1,0 +1,10 @@
+{
+    "configurations": [
+        {
+            "type": "pwa-msedge",
+            "name": "entrar",
+            "request": "launch",
+            "url": "entrar"
+        }
+    ]
+}

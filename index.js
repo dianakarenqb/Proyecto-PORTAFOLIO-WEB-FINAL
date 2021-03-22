@@ -1,34 +1,68 @@
-/*import React from 'react'
-//import {Link} from "./wouter";
-import './header.css'
+class Node {
+	/// value;
+	/// next;
 
-const Index=() => {
-    return (
-        <header class="header" id="inicio">
-                <ul class="menu">
-                    <Link to ="/"><strong class="menu-btn">Portada</strong></Link>
-                </ul>
-            <div class="scroll-up-btn">
-                <i class="fas fa-angle-up"></i>
-            </div>
-            <nav class="navbar">
-                <div class="max-width">
-                    <ul class="menu">
-                        <li><a href="#home" class="menu-btn">Portada</a></li>
-                        <li><a href="#yo" class="menu-btn">Acerca</a></li>
-                        <li><a href="#services" class="menu-btn">Servicios</a></li>
-                        <li><a href="#galeria" class="menu-btn">Portafolio</a></li>
-                        <li><a href="#mi" class="menu-btn">Testimonios</a></li>
-                        <li><a href="#contact" class="menu-btn">Contacto</a></li>
-                        <Link to="/componentes">Configuracion</Link>
-                    </ul>
-                    <div class="menu-btn">
-                        <i class="fas fa-bars"></i>
-                    </div>
-                </div>
-            </nav>
-        </header>
-    )
+	constructor(value) {
+		this.value = value;
+
+		// TODO: Remove this when targeting Node.js 12.
+		this.next = undefined;
+	}
 }
 
-export default Index*/
+class Queue {
+	// TODO: Use private class fields when targeting Node.js 12.
+	// #_head;
+	// #_tail;
+	// #_size;
+
+	constructor() {
+		this.clear();
+	}
+
+	enqueue(value) {
+		const node = new Node(value);
+
+		if (this._head) {
+			this._tail.next = node;
+			this._tail = node;
+		} else {
+			this._head = node;
+			this._tail = node;
+		}
+
+		this._size++;
+	}
+
+	dequeue() {
+		const current = this._head;
+		if (!current) {
+			return;
+		}
+
+		this._head = this._head.next;
+		this._size--;
+		return current.value;
+	}
+
+	clear() {
+		this._head = undefined;
+		this._tail = undefined;
+		this._size = 0;
+	}
+
+	get size() {
+		return this._size;
+	}
+
+	* [Symbol.iterator]() {
+		let current = this._head;
+
+		while (current) {
+			yield current.value;
+			current = current.next;
+		}
+	}
+}
+
+module.exports = Queue;

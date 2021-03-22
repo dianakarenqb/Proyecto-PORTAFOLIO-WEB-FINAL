@@ -1,0 +1,69 @@
+/*Servicios-----------*/
+.services{
+    background: rgb(255, 255, 255);
+    padding: 60px 0 30px 0;
+    margin: auto;
+    overflow: hidden;
+}
+.fa-paint-brush:before {
+    content: "\f1fc";
+}
+
+.services, .teams{
+    color:#fff;
+    background: #34495E;
+}
+.services .title::before,
+.teams .title::before{
+    background: #fff;
+}
+
+.services .serv-content .card{
+    width: calc(33% - 20px);
+    background: #222;
+    text-align: center;
+    border-radius: 6px;
+    padding: 35px 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.services .serv-content .card:hover{
+    background: #808B96 ;
+}
+.services .serv-content .card .box{
+    transition: all 0.3s ease;
+}
+.services .serv-content .card:hover .box{
+    transform: scale(1.05);
+}
+.services .serv-content .card i{
+    font-size: 100px;
+    color: #808B96 ;
+    transition: color 0.3s ease;
+}
+.services .serv-content .card:hover i{
+    color: rgb(0, 0, 0);
+}
+.services .serv-content .card .text{
+    font-size: 25px;
+    font-weight: 500;
+    margin: 10px 0 7px 0;
+}
+.about .about-content, .services .serv-content, .skills .skills-content, .contact .contact-content {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+}
+/*
+.fa, .fas {
+    font-weight: 900;
+}
+
+.fa-code:before {
+    content: "\f121";
+}*/
+
+.foto .img{
+    width: 15px;
+}

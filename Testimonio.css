@@ -1,0 +1,43 @@
+/* Testimonio------------------*/
+.tarjetas{
+    display: flex;
+    justify-content: space-evenly;
+    flex-wrap: wrap;/**/
+}
+
+.perfilacerca{
+    background: #34495E;
+}
+
+.tarjetas .tarjeta{
+    background: #C0392B;
+    display: flex;
+    width: 45%;
+    height: 200px;
+    align-items: center;
+    justify-content: space-evenly;
+    border-radius: 5px;
+    box-shadow: 0 0 6px 0 rgba(0, 0, 0, 0.6);
+    margin: 25px;
+    /*padding-right: 5px;*/
+}
+
+.tarjetas .tarjeta img{
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border: 3px solid #fff;
+    border-radius: 50%;
+    display: block;
+}
+
+.tarjetas .tarjeta > .contenido-texto-tarjeta{
+    width: 60%;
+    color: #fff;
+}
+
+.tarjetas .tarjeta > .contenido-texto-tarjeta p{
+    font-weight: 300;
+    padding-top: 5px;
+}
+/*------------------------------*/
